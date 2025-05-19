@@ -1,6 +1,6 @@
 async function fetchReleases() {
     try {
-        const response = await fetch('https://api.github.com/repos/Raghucharan16/Automated_revanced_Builds/releases/all/');
+        const response = await fetch('https://api.github.com/repos/Raghucharan16/Automated_revanced_Builds/releases/');
         const releases = await response.json();
         
         const releaseList = document.getElementById('release-list');
