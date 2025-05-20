@@ -23,10 +23,6 @@ const appDisplayNames = {
   "youtube-music": "YouTube Music ReVanced"
 };
 
-function toTitleCase(str) {
-  return str.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-}
-
 async function fetchLatestBuilds() {
   try {
     const response = await fetch('https://api.github.com/repos/Raghucharan16/Automated_revanced_Builds/releases');
@@ -35,47 +31,55 @@ async function fetchLatestBuilds() {
 
     const latestBuilds = new Map();
 
-    // Process releases in reverse chronological order
-    releases.forEach(release => {
+    // Process releases in reverse chronological order (newest first)
+    releases.reverse().forEach(release => {
       release.assets.forEach(asset => {
-        const name = asset.name.toLowerCase();
+        const lowerName = asset.name.toLowerCase();
         
-        // Check for arm64-v8a and stable build
-        if (name.includes('-arm64-v8a') && 
-            !name.includes('beta') && 
-            !name.includes('experiments') &&
-            !name.includes('-extended')) {
+        // Check for arm64-v8a and non-beta builds
+        if (lowerName.includes('arm64-v8a') && 
+           !lowerName.includes('beta') &&
+           !lowerName.includes('experiments') &&
+           !lowerName.includes('android-')) {
           
-          const appKey = asset.name.split('-arm64-v8a')[0].toLowerCase();
-          if (!latestBuilds.has(appKey)) {
-            latestBuilds.set(appKey, { release, asset });
+          // Extract base app name
+          const appMatch = asset.name.match(/^(.*?)-arm64-v8a/i);
+          if (appMatch) {
+            const appKey = appMatch[1].toLowerCase().replace(/-revanced$/, '');
+            if (!latestBuilds.has(appKey)) {
+              latestBuilds.set(appKey, { release, asset });
+            }
           }
         }
       });
     });
 
     const releaseList = document.getElementById('release-list');
-    if (!releaseList) throw new Error('Release list element not found');
-
     releaseList.innerHTML = '';
 
-    // Convert Map to array and sort alphabetically
-    Array.from(latestBuilds.entries())
-      .sort((a, b) => a[0].localeCompare(b[0]))
-      .forEach(([appKey, { release, asset }]) => {
-        const displayName = appDisplayNames[appKey] || toTitleCase(appKey) + ' ReVanced';
-        const releaseDate = new Date(release.published_at).toLocaleDateString();
+    latestBuilds.forEach(({ release, asset }, appKey) => {
+      const displayName = appDisplayNames[appKey] || 
+        appKey.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) + ' ReVanced';
+      
+      const releaseCard = document.createElement('div');
+      releaseCard.className = 'release-card';
+      releaseCard.innerHTML = `
+        <h3>${displayName}</h3>
+        <p>Version: ${release.tag_name}</p>
+        <p>Size: ${(asset.size / 1024 / 1024).toFixed(1)} MB</p>
+        <p>Published: ${new Date(release.published_at).toLocaleDateString()}</p>
+        <a href="${asset.browser_download_url}" class="download-btn">
+          Download ${asset.name}
+        </a>
+      `;
+      releaseList.appendChild(releaseCard);
+    });
 
-        const releaseCard = document.createElement('div');
-        releaseCard.className = 'release-card';
-        releaseCard.innerHTML = `
-          <img src="icons/${appKey}.png" alt="${displayName}" onerror="this.style.display='none'">
-          <h3>${displayName}</h3>
-          <p>Size: ${(asset.size / 1024 / 1024).toFixed(1)} MB</p>
-          <p>Published: ${releaseDate}</p>
-          <a href="${asset.browser_download_url}" class="download-btn">Download</a>
-        `;
-        releaseList.appendChild(releaseCard);
-      });
+  } catch (error) {
+    console.error('Error:', error);
+    const releaseList = document.getElementById('release-list');
+    releaseList.innerHTML = '<p>⚠️ Error loading releases. Please refresh or try later.</p>';
+  }
+}
 
-  } catch
+fetchLatestBuilds();
