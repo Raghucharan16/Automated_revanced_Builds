@@ -13,7 +13,7 @@ const appData = {
     },
     "gg-photos": {
         name: "Google Photos ReVanced",
-        domain: "google.com"
+        domain: "photos.google.com"
     },
     "googlenews": {
         name: "Google News ReVanced",
@@ -85,7 +85,7 @@ const appData = {
     },
     "youtube-music": {
         name: "YouTube Music ReVanced",
-        domain: "youtube.com"
+        domain: "music.youtube.com"
     }
 };
 
