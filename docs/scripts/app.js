@@ -91,25 +91,31 @@ const appData = {
 
 async function fetchReleases() {
     try {
+        console.log('Fetching releases...');
         const response = await fetch('https://api.github.com/repos/Raghucharan16/Automated_revanced_Builds/releases');
-        if (!response.ok) throw new Error('Failed to fetch releases');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const releases = await response.json();
+        console.log('Received releases:', releases);
 
         const stableBuilds = new Map();
 
-        // Process releases from newest to oldest
         releases.reverse().forEach(release => {
             release.assets.forEach(asset => {
                 const lowerName = asset.name.toLowerCase();
-                
-                // Filter for arm64-v8a stable builds
+                console.log('Processing asset:', lowerName);
+
                 if (lowerName.includes('arm64-v8a') &&
                    !lowerName.includes('beta') &&
                    !lowerName.includes('experiment') &&
-                   !(lowerName.includes('-extended') && !lowerName.includes('revanced-extended')) {
+                   !lowerName.includes('-extended')) {
+                    
+                    // Improved app key extraction
+                    const appKeyMatch = lowerName.match(/(.*?)(-arm64-v8a|revanced|beta|stable)/);
+                    const appKey = appKeyMatch ? appKeyMatch[1].replace(/-+$/, '') : lowerName.split('-')[0];
+                    console.log('Extracted app key:', appKey);
 
-                    const appKey = asset.name.split('-arm64-v8a')[0].toLowerCase();
-                    if (!stableBuilds.has(appKey)) {
+                    if (appKey && !stableBuilds.has(appKey)) {
+                        console.log('Adding build for:', appKey);
                         stableBuilds.set(appKey, {
                             asset,
                             release
@@ -119,6 +125,7 @@ async function fetchReleases() {
             });
         });
 
+        console.log('Stable builds:', stableBuilds);
         displayReleases(stableBuilds);
         setupThemeToggle();
 
@@ -126,9 +133,10 @@ async function fetchReleases() {
         console.error('Error:', error);
         document.getElementById('release-list').innerHTML = `
             <div class="error">
-                Failed to load releases. Please try again later or
+                Error: ${error.message}. Please check the console for details.
+                <br>
                 <a href="https://github.com/Raghucharan16/Automated_revanced_Builds/releases" target="_blank">
-                    view all releases on GitHub
+                    View Releases Directly on GitHub
                 </a>
             </div>
         `;
