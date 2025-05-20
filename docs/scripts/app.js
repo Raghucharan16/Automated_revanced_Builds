@@ -86,6 +86,10 @@ const appData = {
     "youtube-music": {
         name: "YouTube Music ReVanced",
         icon: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg"
+    },
+    "spotify": {
+        name: "Spotify ReVanced",
+        icon: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg"
     }
 };
 
@@ -97,6 +101,9 @@ async function fetchReleases() {
         const releases = await response.json();
         console.log('Received releases:', releases);
 
+        // Create Spotify card first
+        createFeaturedSpotifyCard();
+
         const stableBuilds = new Map();
 
         releases.reverse().forEach(release => {
@@ -107,9 +114,10 @@ async function fetchReleases() {
                 if (lowerName.includes('arm64-v8a') &&
                    !lowerName.includes('beta') &&
                    !lowerName.includes('experiment') &&
+                   !lowerName.includes('strava') &&
+                   !lowerName.includes('bili') &&
                    !lowerName.includes('-extended')) {
                     
-                    // Improved app key extraction
                     const appKeyMatch = lowerName.match(/(.*?)(-arm64-v8a|revanced|beta|stable)/);
                     const appKey = appKeyMatch ? appKeyMatch[1].replace(/-+$/, '') : lowerName.split('-')[0];
                     console.log('Extracted app key:', appKey);
@@ -141,6 +149,35 @@ async function fetchReleases() {
             </div>
         `;
     }
+}
+
+function createFeaturedSpotifyCard() {
+    const spotifyCard = document.getElementById('spotify-card');
+    const app = appData.spotify;
+    
+    spotifyCard.innerHTML = `
+        <div class="app-header">
+            <img src="${app.icon}" 
+                 class="app-icon" 
+                 alt="${app.name} icon"
+                 onerror="this.src='https://www.gstatic.com/android/market_images/web/favicon.ico'">
+            <h2 class="app-title">${app.name}</h2>
+        </div>
+        <div class="meta-info">
+            <span>Version: Custom Build</span>
+            <span>35.6 MB</span>
+            <span>${new Date().toLocaleDateString()}</span>
+        </div>
+        <a href="https://github.com/Raghucharan16/Automated_revanced_Builds/raw/main/spotify_builds/Spotify.apk" 
+           class="download-btn">
+            Download Featured Build
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+        </a>
+    `;
 }
 
 function displayReleases(builds) {
