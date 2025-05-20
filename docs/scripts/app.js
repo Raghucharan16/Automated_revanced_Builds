@@ -11,7 +11,7 @@ const appData = {
         name: "Facebook ReVanced",
         domain: "facebook.com"
     },
-    gg-photos": {
+    "gg-photos": {
         name: "Google Photos ReVanced",
         icon: "https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Photos_icon_%282020%29.svg"
     },
@@ -106,7 +106,7 @@ async function fetchReleases() {
                 if (lowerName.includes('arm64-v8a') &&
                    !lowerName.includes('beta') &&
                    !lowerName.includes('experiment') &&
-                   !lowerName.includes('-extended')) {
+                   !(lowerName.includes('-extended') && !lowerName.includes('revanced-extended')) {
 
                     const appKey = asset.name.split('-arm64-v8a')[0].toLowerCase();
                     if (!stableBuilds.has(appKey)) {
@@ -142,7 +142,7 @@ function displayReleases(builds) {
     builds.forEach(({ asset, release }, appKey) => {
         const app = appData[appKey] || {
             name: `${appKey.replace(/-/g, ' ')} ReVanced`,
-            icon: `https://www.google.com/s2/favicons?domain=${app.domain || 'android.com'}&sz=128`
+            icon: 'https://www.gstatic.com/android/market_images/web/favicon.ico'
         };
 
         const card = document.createElement('div');
@@ -155,7 +155,24 @@ function displayReleases(builds) {
                      onerror="this.src='https://www.gstatic.com/android/market_images/web/favicon.ico'">
                 <h2 class="app-title">${app.name}</h2>
             </div>
-            <!-- rest of the card remains same -->
+            <div class="meta-info">
+                <span>Version: ${release.tag_name}</span>
+                <span>${(asset.size / 1024 / 1024).toFixed(1)} MB</span>
+                <span>${new Date(release.published_at).toLocaleDateString()}</span>
+            </div>
+            <a href="${asset.browser_download_url}" class="download-btn">
+                Download Stable Build
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </a>
+            <a href="https://github.com/Raghucharan16/Automated_revanced_Builds/releases" 
+               class="all-releases"
+               target="_blank">
+                View All Releases →
+            </a>
         `;
         releaseList.appendChild(card);
     });
