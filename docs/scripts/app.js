@@ -116,7 +116,9 @@ async function fetchReleases() {
                    !lowerName.includes('experiment') &&
                    !lowerName.includes('strava') &&
                    !lowerName.includes('bili') &&
-                   !lowerName.includes('-extended')) {
+                    !lowerName.includes('lite') &&
+                    !lowerName.includes('tumblr') &&
+                    !lowerName.includes('sound')) {
                     
                     const appKeyMatch = lowerName.match(/(.*?)(-arm64-v8a|revanced|beta|stable)/);
                     const appKey = appKeyMatch ? appKeyMatch[1].replace(/-+$/, '') : lowerName.split('-')[0];
@@ -179,7 +181,6 @@ function createFeaturedSpotifyCard() {
         </a>
     `;
 }
-
 function displayReleases(builds) {
     const releaseList = document.getElementById('release-list');
     releaseList.innerHTML = '';
@@ -192,6 +193,17 @@ function displayReleases(builds) {
 
         const card = document.createElement('div');
         card.className = 'app-card';
+        
+        // Add MicroG notice for YouTube apps
+        const microGNotice = ['youtube', 'youtube-music'].includes(appKey) ? `
+            <div class="microg-notice">
+                <span class="material-icons">info</span>
+                Requires MicroG for non-root installation. 
+                <a href="https://github.com/ReVanced/MicroG/releases/download/v0.3.0.233514/microg.apk" 
+                   target="_blank">Download MicroG</a>
+            </div>
+        ` : '';
+
         card.innerHTML = `
             <div class="app-header">
                 <img src="${app.icon || `https://www.google.com/s2/favicons?domain=${app.domain}&sz=128`}" 
@@ -200,6 +212,7 @@ function displayReleases(builds) {
                      onerror="this.src='https://www.gstatic.com/android/market_images/web/favicon.ico'">
                 <h2 class="app-title">${app.name}</h2>
             </div>
+            ${microGNotice}
             <div class="meta-info">
                 <span>Version: ${release.tag_name}</span>
                 <span>${(asset.size / 1024 / 1024).toFixed(1)} MB</span>
