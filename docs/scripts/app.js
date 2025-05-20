@@ -1,6 +1,6 @@
 async function fetchReleases() {
     try {
-        const response = await fetch('https://api.github.com/repos/FiorenMas/Revanced-And-Revanced-Extended-Non-Root/releases/');
+        const response = await fetch('https://api.github.com/repos/FiorenMas/Revanced-And-Revanced-Extended-Non-Root/releases');
         const releases = await response.json();
         
         const releaseList = document.getElementById('release-list');
