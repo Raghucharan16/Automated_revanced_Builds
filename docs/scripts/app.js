@@ -199,7 +199,7 @@ function displayReleases(builds) {
             <div class="microg-notice">
                 <span class="material-icons">info</span>
                 Requires MicroG for non-root installation. 
-                <a href="https://github.com/ReVanced/MicroG/releases/download/v0.3.0.233514/microg.apk" 
+                <a href="https://github.com/WSTxda/MicroG-RE/releases/download/5.11/microg-release.apk" 
                    target="_blank">Download MicroG</a>
             </div>
         ` : '';
