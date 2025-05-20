@@ -3,25 +3,65 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    background-color: #f9f9f9; /* Light background for better contrast */
 }
 
 .release-card {
-    background: #f5f5f5;
-    padding: 20px;
-    margin-bottom: 20px;
+    background: #e6f2ff; /* Soft blue background for a modern look */
+    padding: 24px; /* Increased padding for better spacing */
+    margin-bottom: 24px; /* Increased margin for better separation */
     border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effects */
+}
+
+.release-card:hover {
+    transform: scale(1.02); /* Slight zoom on hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Enhanced shadow on hover */
+}
+
+.release-card h3 {
+    font-size: 1.2em; /* Larger font size for release names */
+    font-weight: bold; /* Bold text for emphasis */
+    margin-bottom: 10px; /* Space below the heading */
+}
+
+.release-card p {
+    margin: 5px 0; /* Consistent spacing for paragraphs */
+    color: #333; /* Darker text for better readability */
 }
 
 .download-btn {
     display: inline-block;
-    background: #007bff;
+    background: #0066cc; /* Darker blue to match the theme */
     color: white;
-    padding: 8px 16px;
+    padding: 10px 20px; /* Larger padding for better touch targets */
     margin: 5px;
     border-radius: 4px;
     text-decoration: none;
+    transition: background-color 0.3s ease; /* Smooth background transition */
 }
 
 .download-btn:hover {
-    background: #0056b3;
+    background: #004c99; /* Darker shade on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    body {
+        padding: 10px; /* Reduced padding for smaller screens */
+    }
+
+    .release-card {
+        padding: 16px; /* Slightly reduced padding */
+        margin-bottom: 16px; /* Slightly reduced margin */
+    }
+
+    .release-card h3 {
+        font-size: 1.1em; /* Slightly smaller font size */
+    }
+
+    .download-btn {
+        padding: 8px 16px; /* Adjusted padding for smaller screens */
+    }
 }
