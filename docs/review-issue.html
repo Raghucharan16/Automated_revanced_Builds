@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Review or Issue</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .review-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(5px);
+            transform: rotateY(0deg);
+            transition: transform 0.3s ease;
+        }
+
+        .review-container:hover {
+            transform: rotateY(5deg) translateZ(20px);
+        }
+
+        .review-container h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .review-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .review-form label {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .review-form input,
+        .review-form textarea,
+        .review-form select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .review-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .review-form button {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .review-form button:hover {
+            transform: translateZ(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-spline">
+        <iframe src='https://my.spline.design/greetingrobot-2cC89blDW3fcusYlxSLeH8IQ/' frameborder='0'></iframe>
+    </div>
+    <div class="review-container">
+        <h2>Submit Review or Issue</h2>
+        <div class="review-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="review-issue">Review/Issue:</label>
+            <textarea id="review-issue" name="review-issue" required></textarea>
+            
+            <label for="stars">Star Rating (out of 5):</label>
+            <select id="stars" name="stars" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            
+            <button type="button" onclick="submitReview()">Submit</button>
+        </div>
+        <a href="index.html" class="home-btn">Home</a>
+    </div>
+
+    <script>
+        function submitReview() {
+            const name = document.getElementById('name').value.trim();
+            const reviewIssue = document.getElementById('review-issue').value.trim();
+            const stars = document.getElementById('stars').value;
+
+            if (!name || !reviewIssue) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            const review = {
+                id: Date.now(),
+                name: name,
+                reviewIssue: reviewIssue,
+                stars: parseInt(stars),
+                date: new Date().toISOString()
+            };
+
+            // Load existing reviews from localStorage
+            const existingReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+            existingReviews.push(review);
+            localStorage.setItem('reviews', JSON.stringify(existingReviews));
+
+            alert('Review/Issue submitted successfully!');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

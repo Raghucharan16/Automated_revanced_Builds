@@ -1,8 +1,4 @@
 const appData = {
-    "bilibili": {
-        name: "Bilibili ReVanced",
-        domain: "bilibili.com"
-    },
     "duolingo": {
         name: "Duolingo ReVanced",
         domain: "duolingo.com"
@@ -47,14 +43,6 @@ const appData = {
         name: "Reddit ReVanced Extended",
         domain: "reddit.com"
     },
-    "soundcloud": {
-        name: "SoundCloud ReVanced",
-        domain: "soundcloud.com"
-    },
-    "strava": {
-        name: "Strava ReVanced",
-        domain: "strava.com"
-    },
     "telegram": {
         name: "Telegram ReVanced",
         domain: "telegram.org"
@@ -62,10 +50,6 @@ const appData = {
     "tiktok": {
         name: "TikTok ReVanced",
         domain: "tiktok.com"
-    },
-    "tumblr": {
-        name: "Tumblr ReVanced",
-        domain: "tumblr.com"
     },
     "twitch": {
         name: "Twitch ReVanced",
@@ -77,10 +61,6 @@ const appData = {
     },
     "youtube": {
         name: "YouTube ReVanced",
-        domain: "youtube.com"
-    },
-    "youtube-lite": {
-        name: "YouTube Lite ReVanced",
         domain: "youtube.com"
     },
     "youtube-music": {
@@ -101,10 +81,11 @@ async function fetchReleases() {
         const releases = await response.json();
         console.log('Received releases:', releases);
 
-        // Create Spotify card first
+        // Create Spotify card initially
         createFeaturedSpotifyCard();
 
         const stableBuilds = new Map();
+        const excludedApps = ['bilibili', 'soundcloud', 'strava', 'tumblr', 'youtube-lite'];
 
         releases.reverse().forEach(release => {
             release.assets.forEach(asset => {
@@ -113,23 +94,21 @@ async function fetchReleases() {
 
                 if (lowerName.includes('arm64-v8a') &&
                    !lowerName.includes('beta') &&
-                   !lowerName.includes('experiment') &&
-                   !lowerName.includes('strava') &&
-                   !lowerName.includes('bili') &&
-                    !lowerName.includes('lite') &&
-                    !lowerName.includes('tumblr') &&
-                    !lowerName.includes('sound')) {
+                   !lowerName.includes('experiment')) {
                     
                     const appKeyMatch = lowerName.match(/(.*?)(-arm64-v8a|revanced|beta|stable)/);
                     const appKey = appKeyMatch ? appKeyMatch[1].replace(/-+$/, '') : lowerName.split('-')[0];
                     console.log('Extracted app key:', appKey);
 
-                    if (appKey && !stableBuilds.has(appKey)) {
+                    // Skip excluded apps
+                    if (appKey && !excludedApps.includes(appKey) && !stableBuilds.has(appKey)) {
                         console.log('Adding build for:', appKey);
                         stableBuilds.set(appKey, {
                             asset,
                             release
                         });
+                    } else if (excludedApps.includes(appKey)) {
+                        console.log(`Skipping excluded app: ${appKey}`);
                     }
                 }
             });
@@ -138,18 +117,29 @@ async function fetchReleases() {
         console.log('Stable builds:', stableBuilds);
         displayReleases(stableBuilds);
         setupThemeToggle();
+        setupAppIcons(stableBuilds);
+        setupReviewIssueButton();
+        setupViewReviewsButton();
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching releases:', error);
         document.getElementById('release-list').innerHTML = `
             <div class="error">
-                Error: ${error.message}. Please check the console for details.
+                <p>Error: ${error.message}. Please check the console for details.</p>
                 <br>
                 <a href="https://github.com/Raghucharan16/Automated_revanced_Builds/releases" target="_blank">
                     View Releases Directly on GitHub
                 </a>
             </div>
         `;
+        document.getElementById('app-icons-list').innerHTML = `
+            <div class="error">
+                <p>Failed to load apps. Please try again later.</p>
+            </div>
+        `;
+        // Ensure Spotify card is still visible even if fetch fails
+        createFeaturedSpotifyCard();
+        setupAppIcons(new Map()); // Call with empty Map to ensure Spotify logo is added
     }
 }
 
@@ -157,12 +147,16 @@ function createFeaturedSpotifyCard() {
     const spotifyCard = document.getElementById('spotify-card');
     const app = appData.spotify;
     
+    if (!spotifyCard) {
+        console.error('Spotify card element not found');
+        return;
+    }
+
     spotifyCard.innerHTML = `
         <div class="app-header">
             <img src="${app.icon}" 
                  class="app-icon" 
-                 alt="${app.name} icon"
-                 onerror="this.src='https://www.gstatic.com/android/market_images/web/favicon.ico'">
+                 alt="${app.name} icon">
             <h2 class="app-title">${app.name}</h2>
         </div>
         <div class="meta-info">
@@ -180,19 +174,28 @@ function createFeaturedSpotifyCard() {
             </svg>
         </a>
     `;
+    spotifyCard.style.display = 'block';
+    console.log('Spotify card created');
 }
+
 function displayReleases(builds) {
     const releaseList = document.getElementById('release-list');
     releaseList.innerHTML = '';
 
+    if (builds.size === 0) {
+        releaseList.innerHTML = '<p>No stable builds available at this time.</p>';
+        return;
+    }
+
     builds.forEach(({ asset, release }, appKey) => {
         const app = appData[appKey] || {
             name: `${appKey.replace(/-/g, ' ')} ReVanced`,
-            icon: 'https://www.gstatic.com/android/market_images/web/favicon.ico'
+            icon: ''
         };
 
         const card = document.createElement('div');
         card.className = 'app-card';
+        card.dataset.appKey = appKey;
         
         // Add MicroG notice for YouTube apps
         const microGNotice = ['youtube', 'youtube-music'].includes(appKey) ? `
@@ -208,8 +211,7 @@ function displayReleases(builds) {
             <div class="app-header">
                 <img src="${app.icon || `https://www.google.com/s2/favicons?domain=${app.domain}&sz=128`}" 
                      class="app-icon" 
-                     alt="${app.name} icon"
-                     onerror="this.src='https://www.gstatic.com/android/market_images/web/favicon.ico'">
+                     alt="${app.name} icon">
                 <h2 class="app-title">${app.name}</h2>
             </div>
             ${microGNotice}
@@ -234,11 +236,94 @@ function displayReleases(builds) {
         `;
         releaseList.appendChild(card);
     });
+    console.log('Releases displayed:', builds.size);
+}
+
+function setupAppIcons(builds) {
+    const appIconsList = document.getElementById('app-icons-list');
+    appIconsList.innerHTML = '';
+
+    const excludedApps = ['bilibili', 'soundcloud', 'strava', 'tumblr', 'youtube-lite'];
+
+    // Always include Spotify, even if builds is empty
+    let appKeys = builds.size > 0 ? Array.from(builds.keys()).filter(key => !excludedApps.includes(key)) : [];
+
+    // Ensure 'facebook' is in the list, then insert 'spotify' after it
+    const facebookIndex = appKeys.indexOf('facebook');
+    if (facebookIndex !== -1) {
+        appKeys.splice(facebookIndex + 1, 0, 'spotify');
+    } else {
+        appKeys.push('spotify'); // Fallback: add Spotify at the end
+    }
+
+    if (appKeys.length === 0) {
+        appIconsList.innerHTML = '<p>No apps available.</p>';
+        return;
+    }
+
+    appKeys.forEach(appKey => {
+        if (excludedApps.includes(appKey)) {
+            console.log(`Skipping icon for excluded app: ${appKey}`);
+            return;
+        }
+
+        const app = appData[appKey];
+        if (!app) {
+            console.log(`No app data for: ${appKey}`);
+            return;
+        }
+
+        const iconDiv = document.createElement('div');
+        iconDiv.innerHTML = `
+            <img src="${app.icon || `https://www.google.com/s2/favicons?domain=${app.domain}&sz=128`}" 
+                 class="app-icon-sidebar" 
+                 alt="${app.name} icon"
+                 data-app-key="${appKey}">
+        `;
+        appIconsList.appendChild(iconDiv);
+        console.log(`Added icon for: ${appKey}`);
+    });
+
+    // Add click event listeners to app icons
+    document.querySelectorAll('.app-icon-sidebar').forEach(icon => {
+        icon.addEventListener('click', () => {
+            const appKey = icon.getAttribute('data-app-key');
+            filterApps(appKey);
+        });
+    });
+}
+
+function filterApps(appKey) {
+    const featuredBuildSection = document.getElementById('featured-build');
+    const allBuildsSection = document.getElementById('all-builds');
+    const spotifyCard = document.getElementById('spotify-card');
+    const appCards = document.querySelectorAll('.app-card');
+
+    // Reset visibility of both sections and ensure Spotify card is visible
+    featuredBuildSection.style.display = 'none';
+    allBuildsSection.style.display = 'none';
+    if (spotifyCard) {
+        spotifyCard.style.display = 'none';
+    }
+
+    if (appKey === 'spotify') {
+        // Re-render Spotify card and show its section
+        createFeaturedSpotifyCard();
+        featuredBuildSection.style.display = 'block';
+    } else {
+        allBuildsSection.style.display = 'block';
+        appCards.forEach(card => {
+            card.style.display = card.dataset.appKey === appKey ? 'block' : 'none';
+        });
+    }
+
+    // Scroll to the top of the main content
+    document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
 }
 
 function setupThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
     themeToggle.addEventListener('click', () => {
@@ -246,6 +331,25 @@ function setupThemeToggle() {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
+    });
+}
+
+function setupReviewIssueButton() {
+    const reviewIssueBtn = document.getElementById('review-issue-btn');
+    reviewIssueBtn.addEventListener('click', () => {
+        window.location.href = 'review-issue.html';
+    });
+}
+
+function setupViewReviewsButton() {
+    const viewReviewsBtn = document.getElementById('view-reviews-btn');
+    viewReviewsBtn.addEventListener('click', () => {
+        const password = prompt('Please enter the password to view reviews:');
+        if (password === 'RBR') {
+            window.location.href = 'view-reviews.html';
+        } else {
+            alert('Incorrect password. Please try again.');
+        }
     });
 }
 

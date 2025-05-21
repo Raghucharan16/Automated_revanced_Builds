@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,26 +8,46 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+    <div class="background-spline">
+        <iframe src='' frameborder='0'></iframe>
+    </div>
     <header>
-        <h1>ReVanced Builds</h1>
-        <button id="theme-toggle" class="theme-btn">
-            <span class="theme-icon">🌓</span>
-        </button>
+        <div class="header-container">
+            <img src="styles/NR_logo.png" class="nr-logo" alt="NR Logo">
+            <div class="header-title">
+                <h1>ReVanced Builds</h1>
+            </div>
+            <div class="header-right">
+                <button id="review-issue-btn" class="header-btn">Review/Issue</button>
+                <button id="view-reviews-btn" class="header-btn">R</button>
+                <button id="theme-toggle" class="theme-btn">
+                    <span class="theme-icon">🌓</span>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <main class="container">
-        <!-- Featured Build Section -->
-        <section class="featured-build">
-            <h2>Featured Build</h2>
-            <div class="app-card" id="spotify-card"></div>
-        </section>
+    <div class="layout-container">
+        <!-- Sidebar with App Icons -->
+        <aside class="sidebar">
+            <div class="app-icons-list" id="app-icons-list"></div>
+        </aside>
 
-        <!-- Regular Builds -->
-        <section class="all-builds">
-            <h2>All arm64-v8a Builds</h2>
-            <div id="release-list" class="app-grid"></div>
-        </section>
-    </main>
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Featured Build Section -->
+            <section class="featured-build" id="featured-build">
+                <h2>Featured Build</h2>
+                <div class="app-card" id="spotify-card"></div>
+            </section>
+
+            <!-- Regular Builds -->
+            <section class="all-builds" id="all-builds">
+                <h2>All arm64-v8a Builds</h2>
+                <div id="release-list" class="app-grid"></div>
+            </section>
+        </main>
+    </div>
 
     <footer>
         <strong>All Apks were extracted from apk mirror and patched automatically.
