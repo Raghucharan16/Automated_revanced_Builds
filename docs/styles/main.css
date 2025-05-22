@@ -29,24 +29,7 @@ body {
     position: relative;
 }
 
-.background-spline {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.background-spline iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
 .layout-container {
-    display: flex;
     min-height: calc(100vh - 100px);
     position: relative;
     z-index: 1;
@@ -56,7 +39,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
-    flex: 1;
 }
 
 header {
@@ -171,20 +153,14 @@ header h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Sidebar Styling */
-.sidebar {
-    width: 80px;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
+/* App Icons Styling */
 .app-icons-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
 }
 
 .app-icon-sidebar {
@@ -373,13 +349,6 @@ footer {
 @media (max-width: 900px) {
     .layout-container {
         flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-        justify-content: center;
-        padding: 0.5rem;
     }
 
     .app-icons-list {
