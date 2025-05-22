@@ -1,19 +1,20 @@
 :root {
-    --bg-color: #ffffff;
-    --text-color: #1a1a1a;
-    --card-bg: #f8f9fa;
+    --bg-color: #000000;
+    --text-color: #e6e6e6;
+    --card-bg: rgba(255, 255, 255, 0.1);
     --primary-color: #2196F3;
-    --border-color: #dee2e6;
-    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --border-color: #404040;
+    --shadow: 0 4px 12px rgba(0,0,0,0.5);
+    --purple-heading: #a855f7;
 }
 
-[data-theme="dark"] {
-    --bg-color: #1a1a1a;
-    --text-color: #e6e6e6;
-    --card-bg: #2d2d2d;
-    --primary-color: #4da3ff;
-    --border-color: #404040;
-    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+[data-theme="light"] {
+    --bg-color: #000000;
+    --text-color: #1a1a1a;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --primary-color: #2196F3;
+    --border-color: #dee2e6;
+    --shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 body {
@@ -24,6 +25,14 @@ body {
     padding: 1rem;
     line-height: 1.6;
     transition: background 0.3s, color 0.3s;
+    perspective: 1000px;
+    position: relative;
+}
+
+.layout-container {
+    min-height: calc(100vh - 100px);
+    position: relative;
+    z-index: 1;
 }
 
 .container {
@@ -34,11 +43,52 @@ body {
 
 header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 1rem;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+}
+
+.nr-logo {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.header-title {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    color: var(--purple-heading);
+    text-align: center;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .theme-btn {
@@ -48,15 +98,90 @@ header {
     font-size: 1.5rem;
     padding: 0.5rem;
     color: var(--text-color);
+    transition: transform 0.2s;
+}
+
+.theme-btn:hover {
+    transform: rotate(360deg);
+}
+
+.header-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.header-btn:hover {
+    transform: scale(1.1) translateZ(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+#review-issue-btn {
+    background: #ff6f61;
+    width: 100px;
+    border-radius: 20px;
+}
+
+#review-issue-btn:hover {
+    background: #e65a50;
+}
+
+.home-btn {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin: 1rem 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+
+.home-btn:hover {
+    transform: translateZ(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* App Icons Styling */
+.app-icons-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.app-icon-sidebar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.app-icon-sidebar:hover {
+    transform: scale(1.1) rotateY(15deg);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Featured Build Styling */
 .featured-build {
     margin-bottom: 3rem;
     padding: 1rem;
-    background: var(--card-bg);
     border-radius: 12px;
-    box-shadow: var(--shadow);
 }
 
 .featured-build h2 {
@@ -64,12 +189,14 @@ header {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--primary-color);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Regular Builds */
 .all-builds h2 {
     margin: 2rem 0 1.5rem;
     color: var(--text-color);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .app-grid {
@@ -84,6 +211,14 @@ header {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    backdrop-filter: blur(5px);
+    transform: rotateY(0deg);
+    transition: transform 0.3s ease;
+}
+
+.app-card:hover {
+    transform: rotateY(5deg) translateZ(20px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
 .app-header {
@@ -98,13 +233,13 @@ header {
     height: 48px;
     border-radius: 12px;
     object-fit: contain;
-    background: white;
     padding: 4px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
 }
 
-[data-theme="dark"] .app-icon {
-    background: #2d2d2d;
+.app-icon:hover {
+    transform: translateZ(10px);
 }
 
 .app-title {
@@ -132,11 +267,12 @@ header {
     padding: 0.8rem 1.2rem;
     border-radius: 8px;
     text-decoration: none;
-    transition: opacity 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .download-btn:hover {
-    opacity: 0.9;
+    transform: translateZ(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .download-btn svg {
@@ -150,6 +286,11 @@ header {
     color: var(--primary-color);
     text-decoration: none;
     font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+
+.all-releases:hover {
+    transform: translateZ(5px);
 }
 
 footer {
@@ -157,6 +298,8 @@ footer {
     padding: 2rem 1rem;
     border-top: 1px solid var(--border-color);
     margin-top: 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Spotify Specific Styles */
@@ -171,11 +314,13 @@ footer {
 
 #spotify-card .download-btn:hover {
     background: #169c46;
+    transform: translateZ(10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .microg-notice {
-    background: #fff3cd;
-    color: #856404;
+    background: rgba(255, 243, 205, 0.2);
+    color: #ffd351;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     margin: 1rem 0;
@@ -183,25 +328,34 @@ footer {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    transform: rotateY(0deg);
+    transition: transform 0.3s;
 }
 
-[data-theme="dark"] .microg-notice {
-    background: #332100;
-    color: #ffd351;
+.microg-notice:hover {
+    transform: rotateY(5deg) translateZ(10px);
 }
 
 .microg-notice a {
-    color: #155724;
+    color: #28a745;
     font-weight: 500;
     text-decoration: underline;
 }
 
-[data-theme="dark"] .microg-notice a {
-    color: #28a745;
-}
-
 .microg-notice .material-icons {
     font-size: 1.1rem;
+}
+
+@media (max-width: 900px) {
+    .layout-container {
+        flex-direction: column;
+    }
+
+    .app-icons-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 600px) {
@@ -216,5 +370,19 @@ footer {
     
     .meta-info {
         flex-direction: column;
+    }
+
+    .header-right {
+        flex-wrap: wrap;
+    }
+
+    #review-issue-btn {
+        width: 80px;
+        font-size: 0.9rem;
+    }
+
+    .nr-logo {
+        width: 48px;
+        height: 48px;
     }
 }
